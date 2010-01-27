@@ -3,14 +3,24 @@ module SoftValidations
     def self.included(base)
       base.extend ClassMethods
 			base.define_callbacks :soft_validate
+=begin
+			base.after_save do |obj|
+			  obj.warnings.clear
+			end
+=end
     end
   
-    # Returns true if there are no messages in the warnings collection. 
-    def complete?
-      warnings.clear
+    # Runs the soft validations and returns true if there are no messages in the warnings collection. 
+    def validate_warnings
+      old_length = warnings.length
       run_callbacks :soft_validate
-      warnings.empty?
+      warnings.length > old_length
     end
+
+    def clear_warnings
+      warnings.clear
+    end
+   
   
     # Returns the warnings collection, an instance of Errors. The warnings collection is a
     # different object than the errors collection. However, you can interact with the warnings 
